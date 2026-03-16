@@ -1,0 +1,10 @@
+{
+  "Type": "Live2D Expression",
+  "Parameters": [
+    {"Id": "ParamMouthForm", "Value": -1.0, "Blend": "Overwrite"},
+    {"Id": "ParamEyeBallX", "Value": 1.0, "Blend": "Overwrite"},
+    {"Id": "ParamBrowLY", "Value": -1.0, "Blend": "Overwrite"},
+    {"Id": "ParamBrowRY", "Value": -1.0, "Blend": "Overwrite"},
+    {"Id": "ParamCheek", "Value": 1.0, "Blend": "Overwrite"}
+  ]
+}

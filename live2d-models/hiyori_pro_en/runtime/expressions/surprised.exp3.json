@@ -1,0 +1,10 @@
+{
+  "Type": "Live2D Expression",
+  "Parameters": [
+    {"Id": "ParamMouthOpenY", "Value": 1.2},
+    {"Id": "ParamEyeLOpen", "Value": 1.2},
+    {"Id": "ParamEyeROpen", "Value": 1.2},
+    {"Id": "ParamBrowLY", "Value": -0.7},
+    {"Id": "ParamBrowRY", "Value": -0.7}
+  ]
+}

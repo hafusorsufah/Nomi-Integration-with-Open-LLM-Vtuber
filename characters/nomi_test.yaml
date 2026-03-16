@@ -1,0 +1,22 @@
+# nomi_test.yaml
+conf_name: 'nomi_test'
+conf_uid: 'nomi_001'
+live2d_model_name: 'hiyori_free_en'
+character_name: 'Nomi'
+human_name: 'User'
+persona_prompt: 'You are a helpful AI assistant.'
+
+agent_config:
+  conversation_agent_choice: 'basic_memory_agent'
+  agent_settings:
+    basic_memory_agent:
+      llm_provider: 'zhipu_llm' # Forced to Zhipu to try and break the Tool logic
+      faster_first_response: false
+      use_mcpp: false
+
+llm_configs:
+  zhipu_llm:
+    base_url: 'http://localhost:3001/v1'
+    llm_api_key: 'not-needed'
+    model: 'glm-4-flash'
+    temperature: 0.7

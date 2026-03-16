@@ -1,0 +1,9 @@
+{
+  "Type": "Live2D Expression",
+  "Parameters": [
+    {"Id": "ParamMouthForm", "Value": 1.0},
+    {"Id": "ParamEyeLSmile", "Value": 1.0},
+    {"Id": "ParamEyeRSmile", "Value": 1.0},
+    {"Id": "ParamCheek", "Value": 0.6}
+  ]
+}

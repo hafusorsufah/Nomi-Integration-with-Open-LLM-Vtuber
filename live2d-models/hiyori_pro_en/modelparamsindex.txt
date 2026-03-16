@@ -1,0 +1,633 @@
+0
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamAngleX'}
+[[Prototype]]
+: 
+Object
+1
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamAngleY'}
+[[Prototype]]
+: 
+Object
+2
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamAngleZ'}
+[[Prototype]]
+: 
+Object
+3
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamCheek'}
+[[Prototype]]
+: 
+Object
+4
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamEyeLOpen'}
+[[Prototype]]
+: 
+Object
+5
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamEyeLSmile'}
+[[Prototype]]
+: 
+Object
+6
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamEyeROpen'}
+[[Prototype]]
+: 
+Object
+7
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamEyeRSmile'}
+[[Prototype]]
+: 
+Object
+8
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamEyeBallX'}
+[[Prototype]]
+: 
+Object
+9
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamEyeBallY'}
+[[Prototype]]
+: 
+Object
+10
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBrowLY'}
+[[Prototype]]
+: 
+Object
+11
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBrowRY'}
+[[Prototype]]
+: 
+Object
+12
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBrowLX'}
+[[Prototype]]
+: 
+Object
+13
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBrowRX'}
+[[Prototype]]
+: 
+Object
+14
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBrowLAngle'}
+[[Prototype]]
+: 
+Object
+15
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBrowRAngle'}
+[[Prototype]]
+: 
+Object
+16
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBrowLForm'}
+[[Prototype]]
+: 
+Object
+17
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBrowRForm'}
+[[Prototype]]
+: 
+Object
+18
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamMouthForm'}
+[[Prototype]]
+: 
+Object
+19
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamMouthOpenY'}
+[[Prototype]]
+: 
+Object
+20
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBodyAngleX'}
+[[Prototype]]
+: 
+Object
+21
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBodyAngleY'}
+[[Prototype]]
+: 
+Object
+22
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBodyAngleZ'}
+[[Prototype]]
+: 
+Object
+23
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBreath'}
+[[Prototype]]
+: 
+Object
+24
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamShoulder'}
+[[Prototype]]
+: 
+Object
+25
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamLeg'}
+[[Prototype]]
+: 
+Object
+26
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamArmLA'}
+[[Prototype]]
+: 
+Object
+27
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamArmRA'}
+[[Prototype]]
+: 
+Object
+28
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamArmLB'}
+[[Prototype]]
+: 
+Object
+29
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamArmRB'}
+[[Prototype]]
+: 
+Object
+30
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamHandLB'}
+[[Prototype]]
+: 
+Object
+31
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamHandRB'}
+[[Prototype]]
+: 
+Object
+32
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamHandL'}
+[[Prototype]]
+: 
+Object
+33
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamHandR'}
+[[Prototype]]
+: 
+Object
+34
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamBustY'}
+[[Prototype]]
+: 
+Object
+35
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamHairAhoge'}
+[[Prototype]]
+: 
+Object
+36
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamHairFront'}
+[[Prototype]]
+: 
+Object
+37
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamHairBack'}
+[[Prototype]]
+: 
+Object
+38
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamSideupRibbon'}
+[[Prototype]]
+: 
+Object
+39
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamRibbon'}
+[[Prototype]]
+: 
+Object
+40
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamSkirt'}
+[[Prototype]]
+: 
+Object
+41
+: 
+CubismId
+_id
+: 
+csmString {s: 'ParamSkirt2'}
+[[Prototype]]
+: 
+Object
+42
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_1_ArtMesh62'}
+[[Prototype]]
+: 
+Object
+43
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_2_ArtMesh62'}
+[[Prototype]]
+: 
+Object
+44
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_3_ArtMesh62'}
+[[Prototype]]
+: 
+Object
+45
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_4_ArtMesh62'}
+[[Prototype]]
+: 
+Object
+46
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_5_ArtMesh62'}
+[[Prototype]]
+: 
+Object
+47
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_6_ArtMesh62'}
+[[Prototype]]
+: 
+Object
+48
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_7_ArtMesh62'}
+[[Prototype]]
+: 
+Object
+49
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_1_ArtMesh61'}
+[[Prototype]]
+: 
+Object
+50
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_2_ArtMesh61'}
+[[Prototype]]
+: 
+Object
+51
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_3_ArtMesh61'}
+[[Prototype]]
+: 
+Object
+52
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_4_ArtMesh61'}
+[[Prototype]]
+: 
+Object
+53
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_5_ArtMesh61'}
+[[Prototype]]
+: 
+Object
+54
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_6_ArtMesh61'}
+[[Prototype]]
+: 
+Object
+55
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_7_ArtMesh61'}
+[[Prototype]]
+: 
+Object
+56
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_1_ArtMesh55'}
+[[Prototype]]
+: 
+Object
+57
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_2_ArtMesh55'}
+[[Prototype]]
+: 
+Object
+58
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_3_ArtMesh55'}
+[[Prototype]]
+: 
+Object
+59
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_4_ArtMesh55'}
+[[Prototype]]
+: 
+Object
+60
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_5_ArtMesh55'}
+[[Prototype]]
+: 
+Object
+61
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_6_ArtMesh55'}
+[[Prototype]]
+: 
+Object
+62
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_7_ArtMesh55'}
+[[Prototype]]
+: 
+Object
+63
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_1_ArtMesh54'}
+[[Prototype]]
+: 
+Object
+64
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_2_ArtMesh54'}
+[[Prototype]]
+: 
+Object
+65
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_3_ArtMesh54'}
+[[Prototype]]
+: 
+Object
+66
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_4_ArtMesh54'}
+[[Prototype]]
+: 
+Object
+67
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_5_ArtMesh54'}
+[[Prototype]]
+: 
+Object
+68
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_6_ArtMesh54'}
+[[Prototype]]
+: 
+Object
+69
+: 
+CubismId
+_id
+: 
+csmString {s: 'Param_Angle_Rotation_7_ArtMesh54'}
+[[Prototype]]
+: 
+Object
+length
+: 
+70

@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Open-LLM-Vtuber</title>
+    <script type="module" crossorigin src="./assets/main-nu7uwxNJ.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/main-QEkl09-0.css">
+  </head>
+
+  <body>
+    <div id="root"></div>
+	<script>
+	(function() {
+		const checkReady = setInterval(() => {
+			const adapter = window.getLAppAdapter ? window.getLAppAdapter() : null;
+			const model = adapter ? adapter.getModel() : null;
+			if (!model) return; // Wait until model loads
+			
+			clearInterval(checkReady);
+			const raw = model._model || model.internalModel;
+			
+			// 1. Parameter Indices
+			const MOUTH_OPEN = 19; const MOUTH_FORM = 18;
+			const EYE_L_OPEN = 4; const EYE_R_OPEN = 6;
+			const EYE_L_SMILE = 5; const EYE_R_SMILE = 7;
+			const BROW_L_Y = 10; const BROW_R_Y = 11;
+			
+			// 2. State Machine
+			window.emoState = { mouthY: 0, mouthForm: 0, eyeOpen: 1, eyeSmile: 0, browY: 0 };
+			let current = { mouthY: 0, mouthForm: 0, eyeOpen: 1, eyeSmile: 0, browY: 0 };
+			const LERP = 0.15;
+			
+			if (!model._stateMachineHooked) {
+				const origUpdate = model.update;
+				model.update = function(deltaTime) {
+					origUpdate.call(this, deltaTime); // Normal breathing/swaying
+					
+					// Smooth transition
+					current.mouthY += (window.emoState.mouthY - current.mouthY) * LERP;
+					current.mouthForm += (window.emoState.mouthForm - current.mouthForm) * LERP;
+					current.eyeOpen += (window.emoState.eyeOpen - current.eyeOpen) * LERP;
+					current.eyeSmile += (window.emoState.eyeSmile - current.eyeSmile) * LERP;
+					current.browY += (window.emoState.browY - current.browY) * LERP;
+					
+					// Memory Overwrite
+					const vals = raw._parameterValues || raw.coreModel._parameterValues;
+					if (vals) {
+						vals[MOUTH_OPEN] = current.mouthY; vals[MOUTH_FORM] = current.mouthForm;
+						vals[EYE_L_OPEN] = current.eyeOpen; vals[EYE_R_OPEN] = current.eyeOpen;
+						vals[EYE_L_SMILE] = current.eyeSmile; vals[EYE_R_SMILE] = current.eyeSmile;
+						vals[BROW_L_Y] = current.browY; vals[BROW_R_Y] = current.browY;
+					}
+					
+					// Force Mesh Redraw
+					if (typeof raw.update === 'function') raw.update(); 
+					else if (raw.coreModel && typeof raw.coreModel.update === 'function') raw.coreModel.update();
+				};
+				model._stateMachineHooked = true;
+			}
+			
+			// 3. The Bridge
+			const okLog = console.log;
+			console.log = function(...args) {
+				okLog.apply(console, args);
+				try {
+					const str = typeof args[0] === 'string' ? args[0] : JSON.stringify(args);
+					if (str.includes("set-expression") || str.includes("emotion")) {
+						const m = str.match(/"(?:expression|emotion)"\s*:\s*"([^"]+)"/);
+						if (m) {
+							const e = m[1];
+							if (e === "happy")    { window.emoState = { mouthY: 0.3, mouthForm: 1, eyeOpen: 1, eyeSmile: 1, browY: 0.5 }; }
+							else if (e === "sad") { window.emoState = { mouthY: 0.1, mouthForm: -1, eyeOpen: 0.7, eyeSmile: 0, browY: -0.8 }; }
+							else if (e === "thinking") { window.emoState = { mouthY: 0, mouthForm: -0.5, eyeOpen: 0.9, eyeSmile: 0, browY: 0.6 }; }
+							else if (e === "excited")  { window.emoState = { mouthY: 0.8, mouthForm: 1, eyeOpen: 1.2, eyeSmile: 1, browY: 0.8 }; }
+							else if (e === "annoyed")  { window.emoState = { mouthY: 0, mouthForm: -0.5, eyeOpen: 0.8, eyeSmile: 0, browY: -1 }; }
+							else { window.emoState = { mouthY: 0, mouthForm: 0, eyeOpen: 1, eyeSmile: 0, browY: 0 }; } // neutral
+						}
+					}
+				} catch(err) {}
+			};
+			okLog("✅ AI NERVOUS SYSTEM ONLINE.");
+		}, 1000);
+	})();
+	</script>
+  </body>
+</html>
