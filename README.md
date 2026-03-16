@@ -31,7 +31,7 @@ To make the Emotion Sync feature work, your Nomi needs to learn how to express i
 Open your Nomi's Backstory+ tab (or Shared Notes) and add the following rule to their inclinations:
 
 
-NOMINAME always prefaces her speech with emotion in brackets, only using [happy], [sad], [annoyed], [excited], [thinking], [surprised],[smug].
+NOMINAME always prefaces thier speech with emotion in brackets, only using [happy], [sad], [annoyed], [excited], [thinking], [surprised],[smug].
 (Note: You can train them over time if they stray from this syntax, but Nomis are incredibly quick to catch onto what you desire!)
 
 Step 2: First-Time Server Setup
