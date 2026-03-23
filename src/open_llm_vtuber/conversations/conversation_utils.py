@@ -50,6 +50,7 @@ async def process_agent_output(
     websocket_send: WebSocketSend,
     tts_manager: TTSTaskManager,
     translate_engine: Optional[Any] = None,
+    emotion: Optional[Dict[str, str]] = None,  # <--- Added this
 ) -> str:
     """Process agent output with character information and optional translation"""
     output.display_text.name = character_config.character_name
@@ -65,8 +66,10 @@ async def process_agent_output(
                 websocket_send,
                 tts_manager,
                 translate_engine,
+                emotion=emotion,  # <--- Pass it down
             )
         elif isinstance(output, AudioOutput):
+            # If your audio-only output needs emotions, add them here too
             full_response = await handle_audio_output(output, websocket_send)
         else:
             logger.warning(f"Unknown output type: {type(output)}")
@@ -88,6 +91,7 @@ async def handle_sentence_output(
     websocket_send: WebSocketSend,
     tts_manager: TTSTaskManager,
     translate_engine: Optional[Any] = None,
+    emotion: Optional[Dict[str, str]] = None,
 ) -> str:
     """Handle sentence output type with optional translation support"""
     full_response = ""
@@ -109,6 +113,7 @@ async def handle_sentence_output(
             live2d_model=live2d_model,
             tts_engine=tts_engine,
             websocket_send=websocket_send,
+            emotion=emotion,
         )
     return full_response
 

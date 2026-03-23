@@ -33,7 +33,18 @@ async def process_single_conversation(
     metadata: Optional[Dict[str, Any]] = None,
 ) -> str:
     tts_manager = TTSTaskManager()
-    full_response = "" 
+    full_response = ""
+    
+    # Expression + Motion Mapping
+    mapping = {
+        "happy":     {"face": "happy",     "motion": "Sway"},
+        "excited":   {"face": "excited",   "motion": "FlickUp"},
+        "sad":       {"face": "sad",       "motion": "FlickDown"},
+        "annoyed":   {"face": "annoyed",   "motion": "Flick@Body"},
+        "thinking":  {"face": "thinking",  "motion": "Flick"},
+        "surprised": {"face": "surprised", "motion": "Tap 0"},
+        "smug":      {"face": "smug",      "motion": "Flick"} 
+    }
 
     try:
         # 1. READ VISION (Only for context, NO MORE auto-reflexes!)
@@ -53,17 +64,37 @@ async def process_single_conversation(
             metadata=metadata
         )
 
-        # 3. STREAM LLM RESPONSE
+        # STREAM LLM RESPONSE
         agent_output_stream = context.agent_engine.chat(batch_input)
         async for output_item in agent_output_stream:
             if isinstance(output_item, SentenceOutput):
                 
+                # Capture text for this sentence
                 if hasattr(output_item, 'display_text') and output_item.display_text:
-                    full_response += output_item.display_text.text
+                    current_text = output_item.display_text.text
                 else:
-                    # Fallback
-                    full_response += output_item.tts_text
+                    current_text = output_item.tts_text
                 
+                full_response += current_text
+
+                # --- 🎭 DYNAMIC EMOTION CHECK ---
+                import re
+                import string
+                
+                # 1. INITIALIZE AS NONE FOR EVERY NEW SENTENCE
+                current_emotion = None 
+                
+                tag_match = re.search(r"[\[\(\*](.*?)[\]\)\*]", current_text)
+                
+                if tag_match:
+                    raw_tag = tag_match.group(1).lower().strip(string.punctuation + " ")
+                    if raw_tag in mapping:
+                        logger.info(f"🎭 [LIVE REACTION] Sentence had tag: {raw_tag}")
+                        
+                        # 2. ASSIGN THE EMOTION IF WE FOUND ONE
+                        current_emotion = mapping[raw_tag] 
+
+                # 3. PROCESS OUTPUT 
                 await process_agent_output(
                     output=output_item,
                     character_config=context.character_config,
@@ -72,59 +103,10 @@ async def process_single_conversation(
                     websocket_send=websocket_send,
                     tts_manager=tts_manager,
                     translate_engine=context.translate_engine,
+                    emotion=current_emotion 
                 )
 
-        # 4. THE NOMI BRAIN (Absolute Control)
-        import re
-        import string
-        final_expr = "happy" # Absolute default
         
-        # The Strict Mapping
-        mapping = {
-            "happy":     {"face": "happy",     "motion": "Sway"},
-            "excited":   {"face": "excited",   "motion": "FlickUp"},
-            "sad":       {"face": "sad",       "motion": "FlickDown"},
-            "annoyed":   {"face": "annoyed",   "motion": "Flick@Body"},
-            "thinking":  {"face": "thinking",  "motion": "Flick"},
-            "surprised": {"face": "surprised", "motion": "Tap 0"},
-            "smug":      {"face": "smug",      "motion": "Flick"} 
-        }
-       
-        # Look for ANYTHING inside brackets, parentheses, or asterisks
-        bracket_match = re.search(r"[\[\(\*](.*?)[\]\)\*]", full_response)
-        
-        if bracket_match:
-            # Extract it, lowercase it, and strip out any spaces or punctuation (like "!")
-            raw_tag = bracket_match.group(1).lower().strip(string.punctuation + " ")
-            
-            if raw_tag in mapping:
-                final_expr = raw_tag
-            else:
-                logger.warning(f"⚠️ NOMI TAG IGNORED: '{raw_tag}' is not in the strict list! Falling back to 'happy'.")
-        else:
-            logger.info("ℹ️ No brackets detected in Nomi's response. Defaulting to 'happy'.")
-
-        # 5. DISPATCH TO AVATAR (With safety delays to prevent AssertionError)
-        logger.info(f"🎭 [REACTION ACTIVE] Emotion: {final_expr} | Motion: {mapping[final_expr]['motion']}")
-        
-        # Send Face
-        await websocket_send(json.dumps({
-            "type": "control", 
-            "command": "set-expression", 
-            "expression": mapping[final_expr]["face"]
-        }))
-        
-        await asyncio.sleep(0.05) # ⏱️ Give the websocket a tiny 50ms breath
-        
-        # Send Motion
-        await websocket_send(json.dumps({
-            "type": "control", 
-            "command": "trigger-debug-motion", 
-            "group": mapping[final_expr]["motion"]
-        }))
-
-        await asyncio.sleep(0.05) # ⏱️ One more breath before finalizing
-
         # WAIT FOR AUDIO TO FINISH GENERATING/SENDING
         if tts_manager.task_list:
             await asyncio.gather(*tts_manager.task_list)

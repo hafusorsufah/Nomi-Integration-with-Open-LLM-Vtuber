@@ -77,3 +77,8 @@ electron-app/
 voices/
 *.exe
 *.zip
+
+node_modules/
+electron-app/*.exe
+electron-app/*.bak
+dist/

@@ -35,6 +35,7 @@ class TTSTaskManager:
         live2d_model: Live2dModel,
         tts_engine: TTSInterface,
         websocket_send: WebSocketSend,
+        emotion: Optional[Dict[str, str]] = None,
     ) -> None:
         """
         Queue a TTS task while maintaining order of delivery.
@@ -85,6 +86,7 @@ class TTSTaskManager:
                 live2d_model=live2d_model,
                 tts_engine=tts_engine,
                 sequence_number=current_sequence,
+                emotion=emotion,
             )
         )
         self.task_list.append(task)
@@ -135,6 +137,7 @@ class TTSTaskManager:
         live2d_model: Live2dModel,
         tts_engine: TTSInterface,
         sequence_number: int,
+        emotion: Optional[Dict[str, str]] = None,
     ) -> None:
         """Process TTS generation and queue the result for ordered delivery"""
         audio_file_path = None
@@ -144,6 +147,7 @@ class TTSTaskManager:
                 audio_path=audio_file_path,
                 display_text=display_text,
                 actions=actions,
+                emotion=emotion,
             )
             # Queue the payload with its sequence number
             await self._payload_queue.put((payload, sequence_number))
@@ -155,6 +159,7 @@ class TTSTaskManager:
                 audio_path=None,
                 display_text=display_text,
                 actions=actions,
+                emotion=emotion,
             )
             await self._payload_queue.put((payload, sequence_number))
 

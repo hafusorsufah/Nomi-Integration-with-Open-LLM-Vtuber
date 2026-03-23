@@ -3,6 +3,7 @@ from pydub import AudioSegment
 from pydub.utils import make_chunks
 from ..agent.output_types import Actions
 from ..agent.output_types import DisplayText
+from typing import Optional, Dict, Any
 
 
 def _get_volume_by_chunks(audio: AudioSegment, chunk_length_ms: int) -> list:
@@ -30,6 +31,7 @@ def prepare_audio_payload(
     display_text: DisplayText = None,
     actions: Actions = None,
     forwarded: bool = False,
+    emotion: Optional[Dict[str, str]] = None,
 ) -> dict[str, any]:
     """
     Prepares the audio payload for sending to a broadcast endpoint.
@@ -57,6 +59,7 @@ def prepare_audio_payload(
             "display_text": display_text,
             "actions": actions.to_dict() if actions else None,
             "forwarded": forwarded,
+            "emotion": emotion,
         }
 
     try:
@@ -77,6 +80,7 @@ def prepare_audio_payload(
         "display_text": display_text,
         "actions": actions.to_dict() if actions else None,
         "forwarded": forwarded,
+        "emotion": emotion,
     }
 
     return payload
