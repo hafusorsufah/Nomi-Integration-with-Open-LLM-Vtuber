@@ -3,11 +3,14 @@
   "version": "1.2.1",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://electron-vite.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hafusorsufah/Nomi-Integration-with-Open-LLM-Vtuber.git"
+  },
   "build": {
     "appId": "com.nomi.integration",
     "productName": "Nomi-Desktop",
+    "publish": null,
     "directories": {
       "output": "../../../dist" 
     },
