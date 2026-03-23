@@ -1,0 +1,320 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Open-LLM-Vtuber</title>
+    <script type="module" crossorigin src="./assets/index-CW5qlpM1.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DBAmt0B7.css">
+  </head>
+
+  <body>
+    <div id="root"></div>
+	<script>
+	(function() {
+		
+		// 1. TRACKING & STATE VARIABLES
+		window.targetMouseX = 0;
+		window.targetMouseY = 0;
+		window.isSpeaking = false; 
+		window.emoState = { active: false, eyeOpen: 1.0, browY: 0, eyeSmile: 0 };
+		
+		window.addEventListener('mousemove', (e) => {
+			const totalWidth = window.screen.width || window.innerWidth;
+			const totalHeight = window.screen.height || window.innerHeight;
+			window.targetMouseX = ((e.screenX / totalWidth) * 2 - 1);
+			window.targetMouseY = -((e.screenY / totalHeight) * 2 - 1);
+		});
+
+		// 2. THE DUAL-ENGINE POSITION & SCALE SAVER
+		(function initDualSaver() {
+			const AVATAR_X_KEY = 'hiyori_matrix_x';
+			const AVATAR_Y_KEY = 'hiyori_matrix_y';
+			const AVATAR_S_KEY = 'hiyori_matrix_scale';
+			const CHAT_KEY = 'hiyori_chat_layout';
+
+			const run = () => {
+				const adapter = window.getLAppAdapter ? window.getLAppAdapter() : null;
+				const model = adapter ? adapter.getModel() : null;
+				const chatBox = document.querySelector('.css-1ft5twu');
+
+				if (!model || !chatBox) {
+					setTimeout(run, 1000);
+					return;
+				}
+
+				const matrix = model._modelMatrix ? model._modelMatrix._tr : null;
+				
+				if (matrix) {
+					const savedX = localStorage.getItem(AVATAR_X_KEY);
+					const savedY = localStorage.getItem(AVATAR_Y_KEY);
+					const savedS = localStorage.getItem(AVATAR_S_KEY);
+					
+					if (savedX && savedY) { matrix[12] = parseFloat(savedX); matrix[13] = parseFloat(savedY); }
+					if (savedS) { const s = parseFloat(savedS); matrix[0] = s; matrix[5] = s; }
+
+					let lastScale = matrix[0];
+					setInterval(() => {
+						const currX = matrix[12]; const currY = matrix[13]; const currS = matrix[0];
+						if (Math.abs(currX) > 0.01) {
+							localStorage.setItem(AVATAR_X_KEY, currX.toString());
+							localStorage.setItem(AVATAR_Y_KEY, currY.toString());
+						}
+						if (Math.abs(currS - lastScale) > 0.001) {
+							localStorage.setItem(AVATAR_S_KEY, currS.toString());
+							lastScale = currS;
+						}
+					}, 1000);
+				}
+
+				const savedChat = localStorage.getItem(CHAT_KEY);
+				if (savedChat) chatBox.setAttribute('style', savedChat);
+
+				setInterval(() => {
+					const currentChatStyle = chatBox.getAttribute('style');
+					if (currentChatStyle && currentChatStyle.includes('translate')) {
+						localStorage.setItem(CHAT_KEY, currentChatStyle);
+					}
+				}, 1000);
+				console.log("✅ Dual-Engine Saver Active");
+			};
+			setTimeout(run, 5000);
+		})();
+
+		// 3. THE INTERCEPTOR (Native WebSocket & Queue System)
+		window.emotionQueue = []; 
+
+		// --- A. HIJACK WEBSOCKET (To catch incoming data) ---
+		const NativeWebSocket = window.WebSocket;
+		window.WebSocket = class extends NativeWebSocket {
+			constructor(url, protocols) {
+				// Initialize the real WebSocket safely
+				super(url, protocols);
+				
+				// Attach our spy listener
+				this.addEventListener('message', function(event) {
+					try {
+						const parsed = JSON.parse(event.data);
+						
+						if (parsed.type === 'audio') {
+							window.isSpeaking = true;
+							
+							// 🟢 BRIGHT LOG: Did the emotion make it across the network?
+							console.log("%c🎯 [WS INTERCEPT] Audio Packet Caught! Emotion:", "color: #4ade80; font-weight: bold; font-size: 14px;", parsed.emotion || "NULL");
+							
+							// Push the emotion (or null) into the queue
+							window.emotionQueue.push(parsed.emotion || null);
+
+							clearTimeout(window.speechTimeout);
+							window.speechTimeout = setTimeout(() => { window.isSpeaking = false; }, 10000);
+						}
+						
+						if (parsed.type === 'backend-synth-complete') {
+							clearTimeout(window.speechTimeout);
+							window.speechTimeout = setTimeout(() => { window.isSpeaking = false; }, 2000);
+						}
+					} catch(e) {}
+				});
+			}
+		};
+		window.WebSocket.prototype = NativeWebSocket.prototype; // Keep the prototype intact
+
+
+		// --- B. HIJACK CONSOLE (To catch the exact moment audio plays) ---
+		const hookLogger = (methodName) => {
+			const orig = console[methodName];
+			console[methodName] = function(...args) {
+				// Listen for the exact trigger phrase across all log types
+				if (args.length > 0 && typeof args[0] === 'string' && args[0].includes('Starting audio playback with lip sync')) {
+					
+					// The audio is playing! Pull the next emotion out of the queue.
+					const emo = window.emotionQueue.shift();
+					
+					// 🟡 BRIGHT LOG: Did it trigger?
+					console.log("%c🎬 [SYNC TRIGGER] Audio playing! Applying emotion:", "color: #facc15; font-weight: bold; font-size: 14px;", emo || "None (Default)");
+					
+					if (emo) {
+						const map = {
+							"happy":     { active: true, eyeOpen: 1.0,  browY: 0.3, eyeSmile: 0.8 },
+							"excited":   { active: true, eyeOpen: 1.0,  browY: 0.8, eyeSmile: 1.0 },
+							"surprised": { active: true, eyeOpen: 1.0,  browY: 1.0, eyeSmile: 0.0 },
+							"sad":       { active: true, eyeOpen: 0.8,  browY: -0.6, eyeSmile: 0.0 },
+							"annoyed":   { active: true, eyeOpen: 0.85, browY: -1.0, eyeSmile: 0.0 },
+							"thinking":  { active: true, eyeOpen: 0.9,  browY: 0.5, eyeSmile: 0.0 },
+							"smug":      { active: true, eyeOpen: 0.65, browY: 0.1, eyeSmile: 1.0 }
+						};
+						window.emoState = map[emo.face] || window.emoState;
+
+						const adapter = window.getLAppAdapter ? window.getLAppAdapter() : null;
+						const model = adapter ? adapter.getModel() : null;
+						
+						if (model && emo.motion) {
+							// 50ms delay to override the "Random Talk Motion"
+							setTimeout(() => {
+								try { model.startMotion(emo.motion, 0, 3); } catch(e) {}
+							}, 50);
+						}
+					}
+				}
+				orig.apply(console, args);
+			};
+		};
+		
+		// Hook all common loggers just in case
+		hookLogger('log');
+		hookLogger('info');
+		hookLogger('debug');
+		
+		// RANDOM LIFE MOTIONS (Every 30s to 2m)
+		const triggerRandomMotion = () => {
+			const adapter = window.getLAppAdapter ? window.getLAppAdapter() : null;
+			const model = adapter ? adapter.getModel() : null;
+			if (model && !window.isSpeaking) {
+				const motions = ["Sway", "Giggle"];
+				const selected = motions[Math.floor(Math.random() * motions.length)];
+				try { model.startMotion(selected, 0, 2); } catch(e) {}
+			}
+			const min = 30 * 1000; const max = 2 * 60 * 1000;
+			setTimeout(triggerRandomMotion, Math.floor(Math.random() * (max - min + 1)) + min);
+		};
+		setTimeout(triggerRandomMotion, 10000);
+		
+		// 5.5 HEARTBEAT TOGGLE HIJACK
+		(function forceHijack() {
+			window.ENABLE_HEARTBEAT = localStorage.getItem('nomi_heartbeat_enabled') !== 'false';
+			const applyLogic = () => {
+				const buttons = document.querySelectorAll('button');
+				const handBtn = buttons[2]; 
+				if (handBtn && !handBtn._isHijacked) {
+					const updateVisuals = () => {
+						if (window.ENABLE_HEARTBEAT) {
+							handBtn.style.setProperty('filter', 'drop-shadow(0 0 8px #4ade80) brightness(1.2)', 'important');
+							handBtn.style.setProperty('border', '1px solid #4ade80', 'important');
+						} else {
+							handBtn.style.setProperty('filter', 'grayscale(100%) opacity(0.5)', 'important');
+							handBtn.style.setProperty('border', '1px solid transparent', 'important');
+						}
+					};
+					handBtn.addEventListener('click', (e) => {
+						e.preventDefault(); e.stopImmediatePropagation();
+						window.ENABLE_HEARTBEAT = !window.ENABLE_HEARTBEAT;
+						localStorage.setItem('nomi_heartbeat_enabled', window.ENABLE_HEARTBEAT);
+						updateVisuals();
+						if (window.ENABLE_HEARTBEAT && window.resetHeartbeat) window.resetHeartbeat();
+					}, true);
+					updateVisuals();
+					handBtn._isHijacked = true;
+				}
+			};
+			setInterval(applyLogic, 2000);
+		})();
+		
+		const REFLEX_MOTIONS = ["Sway", "Flick", "Giggle"];
+		const REFLEX_EXPRESSIONS = ["thinking", "smug", "happy"];
+
+		// 6. WEBSOCKET HEARTBEAT & REFLEX SYSTEM
+		(function initHeartbeat() {
+			window.appSocket = null;
+			const originalSend = WebSocket.prototype.send;
+			WebSocket.prototype.send = function(data) {
+				try {
+					window.appSocket = this; 
+					if (typeof data === 'string') {
+						const parsed = JSON.parse(data);
+						const isChatSubmit = parsed.type === 'text-input';
+						const isMicDone = parsed.type === 'mic-audio-end';
+						const isHeartbeat = parsed.text && parsed.text.includes('[happy]');
+
+						if ((isChatSubmit || isMicDone) && !isHeartbeat) {
+							setTimeout(() => { triggerReflex(); }, 50);
+						}
+					}
+				} catch(e) {}
+				return originalSend.call(this, data);
+			};
+			
+			const triggerReflex = () => {
+				const adapter = window.getLAppAdapter ? window.getLAppAdapter() : null;
+				const model = adapter ? adapter.getModel() : null;
+				if (model) {
+					const motion = REFLEX_MOTIONS[Math.floor(Math.random() * REFLEX_MOTIONS.length)];
+					const emoKey = REFLEX_EXPRESSIONS[Math.floor(Math.random() * REFLEX_EXPRESSIONS.length)];
+					const map = {
+						"happy":    { active: true, eyeOpen: 1.0,  browY: 0.3, eyeSmile: 0.8 },
+						"thinking": { active: true, eyeOpen: 0.9,  browY: 0.5, eyeSmile: 0.0 },
+						"smug":     { active: true, eyeOpen: 0.65, browY: 0.1, eyeSmile: 1.0 }
+					};
+					window.emoState = map[emoKey] || window.emoState;
+					try { model.startMotion(motion, 0, 3); } catch(e) {}
+				}
+			};
+
+			window.resetHeartbeat = () => {
+				if (window.heartbeatTimer) clearTimeout(window.heartbeatTimer);
+				const min = 2 * 60 * 1000; const max = 4 * 60 * 1000;
+				window.heartbeatTimer = setTimeout(triggerHeartbeat, Math.floor(Math.random() * (max - min + 1)) + min);
+			};
+
+			const triggerHeartbeat = () => {
+				if (!window.ENABLE_HEARTBEAT) { window.resetHeartbeat(); return; }
+				const isStreaming = document.querySelector('.prose-dot') || document.querySelector('.typing-indicator');
+				if (window.isSpeaking || isStreaming || !window.appSocket || window.appSocket.readyState !== 1) {
+					window.resetHeartbeat(); return;
+				}
+				originalSend.call(window.appSocket, JSON.stringify({ type: "text-input", text: "[happy] Please say something interesting!", images: [] }));
+				window.resetHeartbeat();
+			};
+
+			window.addEventListener('mousedown', window.resetHeartbeat);
+			window.addEventListener('keydown', window.resetHeartbeat);
+			window.resetHeartbeat();
+		})();
+		
+		const PARAM_MAP = { AngleX: 0, AngleY: 1, EyeBallX: 8, EyeBallY: 9, EyeLOpen: 4, EyeROpen: 6, EyeLSmile: 5, EyeRSmile: 7, BrowLY: 10, BrowRY: 11 };
+
+		// 4. THE NERVOUS SYSTEM 
+		const startNervousSystem = () => {
+			const adapter = window.getLAppAdapter ? window.getLAppAdapter() : null;
+			const model = adapter ? adapter.getModel() : null;
+			if (!model || model._stateMachineHooked) return;
+
+			const raw = model._model || model.internalModel;
+			const core = raw.coreModel || raw._coreModel || raw;
+			let current = { eyeOpen: 1.0, browY: 0, eyeSmile: 0, mouseX: 0, mouseY: 0 };
+			const origUpdate = model.update;
+			
+			model.update = function(deltaTime) {
+				try { origUpdate.call(this, deltaTime); } catch(e) {}
+				const targetX = window.isSpeaking ? 0 : window.targetMouseX;
+				const targetY = window.isSpeaking ? 0 : window.targetMouseY;
+				current.mouseX += (targetX - current.mouseX) * 0.1;
+				current.mouseY += (targetY - current.mouseY) * 0.1;
+				
+				const vals = raw._parameterValues || core._parameterValues;
+				if (vals) {
+					vals[PARAM_MAP.AngleX] = current.mouseX * 30;                 
+					vals[PARAM_MAP.AngleY] = current.mouseY * 30;                 
+					if (vals[2] !== undefined) vals[2] = current.mouseX * current.mouseY * -10; 
+					vals[PARAM_MAP.EyeBallX] = current.mouseX;                     
+					vals[PARAM_MAP.EyeBallY] = current.mouseY;                     
+
+					if (window.emoState.active) {
+						current.eyeOpen += (window.emoState.eyeOpen - current.eyeOpen) * 0.12;
+						current.browY += (window.emoState.browY - current.browY) * 0.12;
+						current.eyeSmile += (window.emoState.eyeSmile - current.eyeSmile) * 0.12;
+						vals[PARAM_MAP.EyeLOpen] = Math.max(0, Math.min(1, vals[PARAM_MAP.EyeLOpen] * current.eyeOpen));
+						vals[PARAM_MAP.EyeROpen] = Math.max(0, Math.min(1, vals[PARAM_MAP.EyeROpen] * current.eyeOpen));
+						vals[PARAM_MAP.BrowLY] = current.browY; vals[PARAM_MAP.BrowRY] = current.browY;
+						vals[PARAM_MAP.EyeLSmile] = current.eyeSmile * 0.8; vals[PARAM_MAP.EyeRSmile] = current.eyeSmile * 0.8;
+					} else {
+						current.eyeOpen = 1.0; current.browY = 0; current.eyeSmile = 0;
+					}
+				}
+				if (raw.update) raw.update();
+			};
+			model._stateMachineHooked = true;
+		};
+		setTimeout(() => { setInterval(startNervousSystem, 1000); }, 3000);
+	})();
+	</script>
+  </body>
+</html>

@@ -71,14 +71,19 @@ mcp_servers.json
 
 .vscode/
 node_modules
-
-
-electron-app/
 voices/
+
 *.exe
 *.zip
 
-node_modules/
+electron-app/resources/app-unpacked/node_modules/
 electron-app/*.exe
 electron-app/*.bak
 dist/
+
+# Ignore the packed asar (too big for GitHub)
+electron-app/resources/app.asar
+electron-app/resources/app.asar.bak
+
+# Also ensure any other large binaries are out
+*.asar

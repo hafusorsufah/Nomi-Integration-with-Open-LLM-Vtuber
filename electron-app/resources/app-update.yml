@@ -1,0 +1,6 @@
+owner: Open-LLM-VTuber
+repo: Open-LLM-VTuber-Web
+provider: github
+releaseType: release
+publishAutoUpdate: false
+updaterCacheDirName: open-llm-vtuber-updater
