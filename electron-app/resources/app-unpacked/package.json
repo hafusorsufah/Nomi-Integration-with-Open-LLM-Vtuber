@@ -10,7 +10,7 @@
   "build": {
     "appId": "com.nomi.integration",
     "productName": "Nomi-Desktop",
-    "publish": null,
+    "publish": [], 
     "directories": {
       "output": "../../../dist" 
     },

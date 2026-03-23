@@ -22,10 +22,10 @@ jobs:
           npm install --save-dev electron-builder
 
       - name: 4. Build the Linux AppImage
-        # This triggers electron-builder to create the portable Linux file
         run: |
           cd electron-app/resources/app-unpacked
-          npx electron-builder --linux AppImage
+          # The --never flag tells it to SHUT DOWN all publishing attempts
+          npx electron-builder --linux AppImage --publish never
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
