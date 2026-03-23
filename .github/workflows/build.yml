@@ -1,34 +1,37 @@
 name: Build Linux Frontend
 on:
-  workflow_dispatch:
+  workflow_dispatch: # This adds a "Play" button in GitHub so you can run it manually
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # The robot spins up a fresh Linux machine
     steps:
-      - name: Checkout Code
+      - name: 1. Get your code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 2. Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Install Dependencies & Builder
+      - name: 3. Install Dependencies
+        # This runs npm install in your unpacked folder to recreate the node_modules
         run: |
           cd electron-app/resources/app-unpacked
           npm install
           npm install --save-dev electron-builder
 
-      - name: Build AppImage
+      - name: 4. Build the Linux AppImage
+        # This triggers electron-builder to create the portable Linux file
         run: |
           cd electron-app/resources/app-unpacked
           npx electron-builder --linux AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Linux Artifact
+      - name: 5. Upload the finished file
+        # This saves the file so you can download it from your browser
         uses: actions/upload-artifact@v4
         with:
-          name: Nomi-Linux-AppImage
+          name: Nomi-Linux-Build
           path: dist/*.AppImage
