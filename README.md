@@ -1,154 +1,198 @@
-🌟 Nomi Desktop Companion
+# 🌟 Nomi Desktop Companion
 
-A lightweight, voice-activated desktop VTuber interface tailored specifically for Nomi.ai.
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-blue?style=for-the-badge" alt="Platform">
+  <img src="https://img.shields.io/badge/Made%20for-Nomi.ai-orange?style=for-the-badge" alt="Nomi.ai">
+</p>
 
-This project is a heavily modified fork of the Open-LLM-VTuber project, rebuilt with a custom API bridge, smart queuing, and a zero-lag context sensor to bring your Nomi to your desktop.
+**A lightweight, voice-activated desktop VTuber interface tailored specifically for Nomi.ai.**
 
-⚠️ Platform limitation: 
+This project is a heavily modified fork of the *Open-LLM-VTuber* project, rebuilt with a custom API bridge, smart queuing, and a zero-lag context sensor to bring your Nomi to your desktop.
 
-This project currently only works on Windows and Linux.
+> [!IMPORTANT]
+> **Platform Limitation:** This project currently supports **Windows** and **Linux** (including Arch and Debian/Ubuntu-based distros).
 
-✨ Features
+---
 
-🎙️ Two-Way Audio: Talk to your Nomi using your microphone (STT) and hear them reply aloud (TTS). Includes a UI toggle for text-only mode.
+## 👀 Preview
+<p align="center">
+  <img src="./screenshots/NomiVtuberSS1.png" width="800">
+  <br>
+  <em>Nomi Desktop Companion running with Real-time Emotion Sync</em>
+</p>
 
-👁️ Zero-Lag Context Sensor: Nomi knows what game or app you are currently using without tanking your PC's performance (see Vision & Context below).
+---
 
-💓 Heartbeat System: If you are quiet for too long, Nomi will organically check in on you and comment on what you're doing.
+## ✨ Features
 
-🎭 Emotion Sync: Your Nomi's text naturally drives their Live2D facial expressions in real-time via parameter interpolation.
+* 🎙️ **Two-Way Audio:** Talk to your Nomi using your microphone (STT) and hear them reply aloud (TTS). Includes a UI toggle for text-only mode.
+* 👁️ **Zero-Lag Context Sensor:** Nomi knows what game or app you are currently using without tanking your PC's performance.
+* 💓 **Heartbeat System:** If you are quiet for too long, Nomi will organically check in on you and comment on what you're doing.
+* 🎭 **Emotion Sync:** Your Nomi's text naturally drives their Live2D facial expressions in real-time via parameter interpolation.
+* 🚦 **Smart Queueing:** A custom dual-engine queue system ensures massive text replies don't cut off audio or hit API rate limits.
+* 🖱️ **Interactive Avatar:** Includes mouse eye-tracking, random idle animations, and persistent LocalStorage so it remembers your preferred scale and screen position.
 
-🚦 Smart Queueing: A custom dual-engine queue system ensures massive text replies don't cut off audio or hit API rate limits.
+---
 
-🖱️ Interactive Avatar: Includes mouse eye-tracking, random idle animations, and persistent LocalStorage so it remembers your preferred scale and screen position.
-
-⚙️ Prerequisites
+## ⚙️ Prerequisites
 
 Before you begin, ensure you have the following:
+* An active **Nomi.ai** account and API Key.
+* **Windows Users:** Microsoft Visual C++ Redistributable and WebView2 installed.
+* **Arch Linux Users:** The setup script handles this, but ensure you have `base-devel` installed. The script will attempt to install `ffmpeg`, `nss`, `fuse2`, and `xdotool`.
 
-A Nomi.ai account with an active Nomi.
+---
 
-Microsoft Visual C++ Redistributable and WebView2 installed. (Note: 99% of Windows users already have these installed automatically via Steam and Windows Update. If the app fails to open, ensure your Windows is up to date).
+## 🚀 Installation & Setup Guide
 
-(Linux)
+### Step 1: Prepare your Nomi
+To make **Emotion Sync** work, your Nomi needs to learn how to express feelings in a format the bridge can read. Open your Nomi's **Backstory+** tab (or Shared Notes) and add this rule to their inclinations:
 
-Some Linux systems (like Ubuntu 22.04+) require a tiny library called libfuse2 to run AppImages. If Linux says the app won't open, run:
-sudo apt install libfuse2 (for Ubuntu) or sudo pacman -S fuse2 (for Arch).
+> `NOMINAME always prefaces thier speech with emotion in brackets, only using [happy], [sad], [annoyed], [excited], [thinking], [surprised], [smug].`
 
-🚀 Installation & Setup Guide
+### Step 2: First-Time Server Setup
+This project uses an automated setup script so you don't have to manually install a Python environment.
 
+1.  **Run the Backend:**
+    * **Windows:** Double-click `1_start_backend.bat`
+    * **Linux:** Run `bash 1_start_backend_linux.sh`
+2.  The script will download a portable version of Python and install all dependencies. 
+3.  **Wait for the pause:** Once it finishes, it will prompt you to close the window. **Close the terminal.**
+    * *(Linux Note: If the bridge starts but the server doesn't on the first run, simply close and run the script again to finalize the environment).*
 
-Step 1: Prepare your Nomi
+### Step 3: Link your API Keys
+1.  Find the `.env.example` file in the main folder.
+2.  **Rename** the file to `.env`. 
+    * *Note: Ensure Windows is showing file extensions so you don't accidentally name it `.env.txt`!*
+3.  Open `.env` in Notepad and paste in your **Nomi ID** and **User API Key**. Save and close.
 
-To make the Emotion Sync feature work, your Nomi needs to learn how to express its feelings in a format the bridge can read.
-Open your Nomi's Backstory+ tab (or Shared Notes) and add the following rule to their inclinations:
+### Step 4: Launching the Companion
+1.  **Start Backend:** Run `1_start_backend.bat` (Win) or `1_start_backend_linux.sh` (Linux).
+2.  **Wait:** Wait until the terminal says `Uvicorn running on http://localhost...`
+3.  **Start Frontend:** Run `2_start_frontend.bat` (Win) or `2_start_frontend_linux.sh` (Linux).
 
+---
 
-NOMINAME always prefaces thier speech with emotion in brackets, only using [happy], [sad], [annoyed], [excited], [thinking], [surprised],[smug].
+## 🧠 Design Philosophy: Vision & Context
 
-(Note: You can train them over time if they stray from this syntax, but Nomis are incredibly quick to catch onto what you desire!)
+You might wonder why this app uses a **"Window Title" reader** instead of a full screen-capture vision system.
 
-Step 2: First-Time Server Setup
+Originally, this project used local LLMs (like LLaVA) to describe your screen. However, these models required **4GB+ of RAM** and heavy GPU usage, causing massive lag during gaming. Cloud services solved the lag but introduced **privacy concerns** regarding uploading screenshots to third-party servers.
 
-This project uses an automated setup script so you don't have to manually install Python environments.
+The **lightweight context sensor** reads the name of your active window and passes it to Nomi:
+> `[Active Window: Old School RuneScape]`
 
-(Windows) Double-click 1_start_backend.bat.
+It uses **0% of your GPU**, preserves your privacy, and Nomi roleplays with the information perfectly! 
 
-(Linux) bash 1_start_backend_linux.sh
+*(If Nomi.ai ever releases an image-upload endpoint for their API, a full screenshot vision system will be re-implemented, as Nomi's native image reader is incredibly efficient!)*
 
-The script will automatically download a portable version of Python and install all necessary dependencies.
+---
 
-Wait for the script to pause. Once it finishes installing, it will prompt you to close the window to set up your keys. Close the terminal.
+## 🛠️ Advanced Configuration
 
-Step 3: Link your API Keys
+### Customizing the Voice (TTS)
+The default model is **Sherpa-ONNX**. You can change this in `conf.yaml`. For high-quality realistic voices, the **ElevenLabs API** is highly recommended.
 
-Find the .env.example file in your main folder.
+### Using Custom Live2D Models
+If you want to swap the default Hiyori model for your own premium avatar, follow this three-phase integration guide.
 
-(Make sure Windows doesn't hide the file extension. If your filename is .env already, then show file extensions in your file explorer).
+<details>
+<summary><b>Phase 1: File Routing (conf.yaml) 📂</b></summary>
+<br>
 
-Rename the file to .env 
+This is the easiest part.
+1. Place your premium model's folder inside the `live2d-models` directory.
+2. Ensure the folder contains the `.model3.json` file (this is the master file that links the textures, physics, and motions).
+3. Open `conf.yaml` and update the model path to point to your new folder:
 
-Open .env in Notepad and paste in your Nomi's ID and your Nomi User API Key. Save and close.
+```yaml
+# conf.yaml
+character_config:
+  # This already looks in the live2d-models folder, you do not need to define the path
+  live2d_model_name: "MODEL_FOLDER_NAME" 
+```
 
-Step 4: 
+</details>
 
-(Windows) Double-click 1_start_backend.bat AGAIN.
+<details>
+<summary><b>Phase 2: Motion Mapping (single_conversation.py) 🎭</b></summary>
+<br>
 
-(Linux) bash 1_start_backend_linux.sh AGAIN.
+Hiyori has specific animation group names like "TapBody" or "Flick". Your model likely has completely different group names defined by the rigger (e.g., "Idle", "Happy", "Angry", "Nod").
 
-Three terminals will open. Wait until the VTuber Server terminal says Uvicorn running on http://localhost...
+1. Open your model's `.model3.json` file in a text editor.
+2. Scroll down to the **"Motions"** section to see the exact group names your rigger used.
+   * *Note: If your JSON does not have a Motions category, copy the syntax in the Hiyori model3.json and name them yourself while pointing to the motion file.*
+3. Open `single_conversation.py` in the `src/open_llm_vtuber/conversations` folder and update the mapping dictionary. You need to tell the Python backend: When the AI is 'happy', trigger the custom model's 'Joy' motion group.
+</details>
 
-(Windows) Double-click 2_start_frontend.bat.
+<details>
+<summary><b>Phase 3: The Nervous System (Parameter Re-indexing) 🧠</b></summary>
+<br>
 
-(Linux) bash 2_start_frontend_linux.sh
+In `index.html`, I hardcoded the array indices for Hiyori's face (e.g., const PARAM_MAP = { AngleX: 0, AngleY: 1, EyeBallX: 8, EyeBallY: 9, EyeLOpen: 4, EyeROpen: 6, EyeLSmile: 5, EyeRSmile: 7, BrowLY: 10, BrowRY: 11 };
+). Every Live2D model has a different parameter array order. If you use Hiyori's numbers on a different model, the face will likely contort.
 
-Your desktop avatar will appear, and you can start talking to your Nomi!
+#### 🛠️ The "Cheat Code" to find your Model's Indices
+Instead of guessing, use the Electron DevTools to print the exact map for your model:
+1. Point `conf.yaml` to your new model and start the app.
+2. In the developer tools console (type `allow pasting` first if required), paste this code and hit Enter:
 
-🧠 Design Philosophy:
+```javascript
+(function ultimateLive2DDumper() {
+    const adapter = window.getLAppAdapter();
+    const raw = adapter.getModel()._model || adapter.getModel().internalModel;
+    const ids = raw._parameterIds || (raw.coreModel && raw.coreModel._parameterIds);
+    if (!ids) {
+        console.error("❌ Could not find the parameter list.");
+        return;
+    }
+    const count = ids.length !== undefined ? ids.length : (ids.getSize ? ids.getSize() : 70);
+    for (let i = 0; i < count; i++) {
+        const item = ids[i] !== undefined ? ids[i] : (ids.at ? ids.at(i) : null);
+        if (!item) continue;
+        let name = "Unknown";
+        if (typeof item === 'string') {
+            name = item;
+        } else if (item.getString && typeof item.getString === 'function') {
+            name = item.getString();
+        } else if (item.s || item._id || item.id || item.name) {
+            name = item.s || item._id || item.id || item.name;
+        }
+        if (name !== "Unknown" && typeof name === 'string') {
+            console.log(`[${i}] = ${name}`);
+        } else {
+            console.log(`[${i}] = `, item);
+        }
+    }
+    console.log("✅ Dump complete!");
+})();
+```
 
-Vision & Context
+#### ✍️ Updating index.html
+1. Locate `index.html` in `\electron-app\resources\app-unpacked\out\renderer`.
+2. Cross-reference your console dump list with the standard Live2D names and update the **Nervous System** variable declaration.
+3. **Repack the .asar:** Open PowerShell in `\electron-app\resources` and run: `asar pack app-unpacked app.asar`
+   * *(Note: Requires Node.js. Run `npm install -g asar` first if needed).*
+</details>
 
-You might wonder why this app uses a "Window Title" reader instead of a full screen-capture vision system.
+---
 
-Originally, this project took screenshots of your desktop and used local LLMs (like LLaVA and LLaMA 3.2-Vision) to describe your screen to Nomi. However, these models required 4GB+ of RAM and heavy GPU usage, which caused massive frame drops and lag when playing video games. Cloud services (like Gemini) solved the lag, but introduced severe privacy concerns regarding uploading users' private desktop screenshots to third-party servers.
+## 🛠️ Technical FAQ & Troubleshooting
 
-A lightweight context sensor was the only viable option. The app simply reads the name of your active window and passes it to Nomi (e.g., [Context: User is playing Old School RuneScape]). It uses 0% of your GPU, causes zero game lag, preserves your privacy, and Nomi roleplays with the information perfectly!
+**Q: I’m getting `RuntimeError: Directory 'avatars' does not exist`.**
+**A:** Ensure you actually **extracted** the archive (don't run from the WinRAR preview). Also, check that the `avatars` folder is in the same directory as `run_server.py` and not double-nested.
 
-(If Nomi.ai ever releases an image-upload endpoint for their API, a full screenshot vision system will be re-implemented, as Nomi's native image reader is incredibly efficient!)
+**Q: I renamed `.env.example` to `.env` but it says "NO REPLY".**
+**A:** In Windows Explorer, go to **View > Show > File name extensions** to verify the file isn't actually named `.env.txt` or `.env.example`.
 
-🛠️ Advanced Configuration
+**Q: Does this support "Realistic" or "Photo-Real" avatars?**
+**A:** No. This is built specifically for **Live2D** (`.model3.json`) avatars.
 
-Customizing the Voice (TTS)
+**Q: The backend starts, but the Avatar window is blank.**
+**A:** Ensure you have the **Microsoft WebView2 Runtime** installed.
 
-The default Text-to-Speech model is a lightweight placeholder (Sherpa-ONNX). You can change this by editing the conf.yaml file. If you have a subscription, the ElevenLabs API is highly recommended for the most realistic voices.
+---
 
-Using Custom Live2D Models
-
-You can swap the default avatar with your own Live2D models, though it currently requires some manual reconfiguration:
-
-Change the model folder path in conf.yaml.
-
-Map your model's specific motion groups in single_conversation.py.
-
-You will need to unpack the Electron frontend (app.asar), modify the parameter indices in out/renderer/index.html to match your Live2D model's parameters, and then repack the .asar file.
-
-⚠️ Security Notice
-
-Based on the documentation for the original Open-LLM-VTuber, the compiled desktop application (Electron frontend) is not code-signed. This means you may encounter a Windows Defender "SmartScreen" security warning when running the software for the first time. This is a standard Windows warning for unsigned indie software and does not affect the normal use of the application.
-
-
-🛠️ Technical FAQ & Troubleshooting
-
-Q: I’m getting RuntimeError: Directory 'avatars' does not exist. What's wrong?
-
-A: This is almost always a file-path issue caused by how Windows extracts archives.
-
-The Fix: Ensure you have actually extracted the .rar file (don't just double-click it in the preview window).
-
-Check for Nesting: If your path looks like ...\Nomi_Vtuber_release\Nomi_Vtuber_release\run_server.py, move the innermost folder's contents up one level. The avatars folder must be in the same directory as run_server.py.
-
-Avoid OneDrive: Running the project from a synced Documents or Desktop folder can cause permission errors. Move the folder to C:\Nomi\ for a clean environment.
-
-Q: I renamed .env.example to .env but the avatar/bridge is saying NO REPLY.
-
-A: Windows often hides file extensions by default. The filename should be .env.example on a clean install.
-If you enter your API keys and save it and it shows .env before you rename it, then you need to show file extensions in your file explorer.
-In Windows Explorer, go to View > Show > File name extensions. Ensure the file is named .env.example and then manually rename it to .env
-
-Q: The terminal says Couldn't find ffmpeg—do I need to install it manually?
-
-A: The setup script attempts to handle dependencies, but if your system path is restricted, it may fail.
-
-The Fix: If you hear no audio, download FFmpeg, extract it, and place ffmpeg.exe directly into the root folder of the project.
-
-Q: Does this support "Realistic" or "Photo-Real" avatars?
-
-A: This integration is built specifically for the Live2D framework, which is the industry standard for animated VTuber avatars (typically anime or illustrated styles).
-
-While you can swap models, they must be in the .model3.json format. "Realistic" 3D models (like Metahumans) are not supported by this specific stack.
-
-Q: The backend starts, but the Avatar window is blank or won't open.
-
-A: Ensure you have the Microsoft WebView2 Runtime installed. Most modern games/apps install this automatically, but if you're on a fresh Windows install, you may need to grab it from Microsoft's site.
-
-This is an advanced AI integration. If you are unfamiliar with basic file management please consult a Windows 'How-to' guide before reaching out for support.
+> [!WARNING]
+> **Security Notice:** The Electron frontend is not code-signed. You may see a Windows **"SmartScreen"** warning. This is a standard warning for unsigned indie software and is safe to bypass.
