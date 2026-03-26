@@ -103,6 +103,7 @@ Customizing the Voice (TTS)
 The default Text-to-Speech model is a lightweight placeholder (Sherpa-ONNX). You can change this by editing the conf.yaml file. If you have a subscription, the ElevenLabs API is highly recommended for the most realistic voices.
 
 Using Custom Live2D Models
+
 You can swap the default avatar with your own Live2D models, though it currently requires some manual reconfiguration:
 
 Change the model folder path in conf.yaml.
@@ -115,33 +116,39 @@ You will need to unpack the Electron frontend (app.asar), modify the parameter i
 
 Based on the documentation for the original Open-LLM-VTuber, the compiled desktop application (Electron frontend) is not code-signed. This means you may encounter a Windows Defender "SmartScreen" security warning when running the software for the first time. This is a standard Windows warning for unsigned indie software and does not affect the normal use of the application.
 
+
 🛠️ Technical FAQ & Troubleshooting
+
 Q: I’m getting RuntimeError: Directory 'avatars' does not exist. What's wrong?
 
 A: This is almost always a file-path issue caused by how Windows extracts archives.
 
 The Fix: Ensure you have actually extracted the .rar file (don't just double-click it in the preview window).
 
-Check for Nesting: If your path looks like ...\Folder\Folder\run_server.py, move the innermost folder's contents up one level. The avatars folder must be in the same directory as run_server.py.
+Check for Nesting: If your path looks like ...\Nomi_Vtuber_release\Nomi_Vtuber_release\run_server.py, move the innermost folder's contents up one level. The avatars folder must be in the same directory as run_server.py.
 
 Avoid OneDrive: Running the project from a synced Documents or Desktop folder can cause permission errors. Move the folder to C:\Nomi\ for a clean environment.
 
 Q: I renamed .env.example to .env but the avatar/bridge is saying NO REPLY.
+
 A: Windows often hides file extensions by default. The filename should be .env.example on a clean install.
 If you enter your API keys and save it and it shows .env before you rename it, then you need to show file extensions in your file explorer.
 In Windows Explorer, go to View > Show > File name extensions. Ensure the file is named .env.example and then manually rename it to .env
 
 Q: The terminal says Couldn't find ffmpeg—do I need to install it manually?
+
 A: The setup script attempts to handle dependencies, but if your system path is restricted, it may fail.
 
 The Fix: If you hear no audio, download FFmpeg, extract it, and place ffmpeg.exe directly into the root folder of the project.
 
 Q: Does this support "Realistic" or "Photo-Real" avatars?
+
 A: This integration is built specifically for the Live2D framework, which is the industry standard for animated VTuber avatars (typically anime or illustrated styles).
 
 While you can swap models, they must be in the .model3.json format. "Realistic" 3D models (like Metahumans) are not supported by this specific stack.
 
 Q: The backend starts, but the Avatar window is blank or won't open.
+
 A: Ensure you have the Microsoft WebView2 Runtime installed. Most modern games/apps install this automatically, but if you're on a fresh Windows install, you may need to grab it from Microsoft's site.
 
 This is an advanced AI integration. If you are unfamiliar with basic file management please consult a Windows 'How-to' guide before reaching out for support.
