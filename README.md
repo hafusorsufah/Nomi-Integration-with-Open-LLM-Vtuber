@@ -181,15 +181,19 @@ Instead of guessing, use the Electron DevTools to print the exact map for your m
 ## 🛠️ Technical FAQ & Troubleshooting
 
 **Q: I’m getting `RuntimeError: Directory 'avatars' does not exist`.**
+
 **A:** Ensure you actually **extracted** the archive (don't run from the WinRAR preview). Also, check that the `avatars` folder is in the same directory as `run_server.py` and not double-nested.
 
 **Q: I renamed `.env.example` to `.env` but it says "NO REPLY".**
+
 **A:** In Windows Explorer, go to **View > Show > File name extensions** to verify the file isn't actually named `.env.txt` or `.env.example`.
 
 **Q: Does this support "Realistic" or "Photo-Real" avatars?**
+
 **A:** No. This is built specifically for **Live2D** (`.model3.json`) avatars.
 
 **Q: The backend starts, but the Avatar window is blank.**
+
 **A:** Ensure you have the **Microsoft WebView2 Runtime** installed.
 
 ---
